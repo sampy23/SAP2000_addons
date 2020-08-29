@@ -270,7 +270,7 @@ class App():
                         message = "Close all SAP2000 instances if any open and reopen the target file first.")
         messagebox.showinfo(title = "Help",message = "For trouble shooting contact me through sbz5677@gmail.com ")
         self.master.destroy()
-        exit()
+        sys.exit()
     
     def return_values(self):
         return self.SapModel,self.curr_unit
