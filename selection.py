@@ -287,3 +287,6 @@ if __name__ == '__main__':
     # reset to the previous units
     SapModel, curr_unit = inst_1.return_values()
     SapModel.SetPresentUnits(curr_unit)
+    # exiting information
+    tk.Tk().withdraw()
+    messagebox.showinfo(title = "Help",message = "For trouble shooting contact me through sbz5677@gmail.com ")
