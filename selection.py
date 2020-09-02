@@ -169,8 +169,8 @@ class App():
         for lab in selected_frame_labels:
             point_1,point_2 = self.point_label(lab)
             slpe = round(self.slope(point_1,point_2),4)
-            point_1 = [round(x,2) for x in point_1]
-            point_2 = [round(x,2) for x in point_2]
+            point_1 = [round(x,4) for x in point_1]
+            point_2 = [round(x,4) for x in point_2]
             if target_slope == slpe:
                 matching.append(lab)
             if point_1[:-1] == point_2[:-1]: # to include verticals
