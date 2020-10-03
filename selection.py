@@ -31,12 +31,13 @@ class App():
             ent = tk.Entry(root.frame_1)
             ent.insert(1,entry)
             ent.grid(row=nrow, column=1)
-            self.entry_set.append(ent.get())
+            self.entry_set.append(ent)
             nrow += 1
         button = tk.Button(root.frame_1,text = "OK",width=8,relief = 'raised',command = self.assign)
         button.grid(row = nrow,column=0,columnspan = 2,padx=10,pady=10)
 
     def assign(self):
+        self.entry_set = [x.get() for x in self.entry_set]
         self.master.frame_1.destroy()
         # recreating frame_1
         self.master.frame_1 = tk.LabelFrame(root)
