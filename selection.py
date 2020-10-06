@@ -84,20 +84,27 @@ class App():
         self.backup(self.file_path) # backup function
         return base_name
 
-    def backup(self,file_path):
+    def backup(self,model_path):
+        if 4 in set(self.SapModel.Analyze.GetCaseStatus()[2]): 
+            #atleast one case has run so no need to save the file and lose analysis data
+            pass
+        else:
+            self.SapModel.File.Save(model_path) #save file before taking backup, but this deletes program results
+        os.chdir(os.path.dirname(model_path))
         # model backup
-        # SapModel.File.Save(file_path)
-        os.chdir(os.path.dirname(file_path))
-        file_name_ext = os.path.basename(file_path)
-        file_name,ext = os.path.splitext(file_name_ext)
-        time_stamp = time.strftime("%Y%m%d-%H%M%S")
-        new_file_name = file_name+ "_" + time_stamp + ext
         try:
             os.mkdir(".//_backup")
         except FileExistsError:
             pass
-        os.chdir(".//_backup")
-        shutil.copy2(file_path,new_file_name)
+        file_dir = os.path.dirname(model_path)
+        file_name_ext = os.path.basename(model_path)
+        file_name,ext = os.path.splitext(file_name_ext)
+        time_stamp = time.strftime("%H%M%S")
+        new_file_name = file_name+ "_" + time_stamp + ext
+        new_model_path = os.path.join("_backup",new_file_name)
+        self.new_model_path = os.path.join(file_dir,new_model_path)
+        shutil.copy2(model_path,new_model_path) 
+
 
     def point_label(self,label):
         joints = self.SapModel.FrameObj.GetPoints(label)
