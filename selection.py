@@ -8,6 +8,8 @@ from tkinter import messagebox
 
 class App():
     def __init__(self,master):
+        """Initialise the program with height, length and orgin of the model. This is required to make sure that
+        no frame is left out in the selection process"""
         self.master = master
 
         self.master.title("selection")
@@ -40,7 +42,7 @@ class App():
         self.master.frame_1 = tk.LabelFrame(root)
         self.master.frame_1.grid(row=0,column=0)
         self.button_1 = tk.Button(self.master.frame_1,text = "X/Y Sn cut",width=16,
-                    bg = 'pale green',activebackground = 'orange red',relief = 'raised',command = self.y_sncut)
+                    bg = 'pale green',activebackground = 'orange red',relief = 'raised',command = self.xy_sncut)
         self.button_2 = tk.Button(self.master.frame_1,text = "Inclined Sn cut",width=16,
                     bg = 'pale green',activebackground = 'orange red',relief = 'raised',command = self.inclined_sncut)
         self.button_3 = tk.Button(self.master.frame_1,text = "Mirror selection",width=16,
@@ -147,6 +149,7 @@ class App():
             self.SapModel.SelectObj.CoordinateRange(**kwargs_4,IncludeIntersections = False)
     @staticmethod    
     def collect_framelabels(selected):
+        """Returns frame labels of selected frames"""
         frame_labels = []
         object_types = selected[1] 
         selected_labels = selected[2] 
@@ -156,6 +159,8 @@ class App():
         return frame_labels
 
     def filter_unwanted(self,target_point1,target_point2,selected_frame_labels,orgin):
+        """Since SAP2000 selects elements using rectangular bounding box, several unwanted frames are selected. This
+        can be filtered out using sum rule"""
         matching = []
         target_point1_sum = abs(target_point1[0] - orgin[0]) + abs(target_point1[1] - orgin[1]) + abs(target_point1[2] - orgin[2])
         target_point2_sum = abs(target_point2[0] - orgin[0]) + abs(target_point2[1] - orgin[1]) + abs(target_point2[2] - orgin[2])
@@ -172,6 +177,7 @@ class App():
 
     @staticmethod
     def slope(point_1,point_2):
+        """Calculates slope between 2 points"""
         x1 = point_1[0]
         y1 = point_1[1]
         x2 = point_2[0]
@@ -183,6 +189,8 @@ class App():
         return slp
 
     def filter_unwanted_slope(self,target_point_1,target_point_2,selected_frame_labels):
+        """Since SAP2000 selects elements using rectangular bounding box, several unwanted frames are selected. This
+        can be filtered out using slope rule"""
         matching = []
         target_slope = round(self.slope(target_point_1,target_point_2),4)
         for lab in selected_frame_labels:
@@ -196,7 +204,8 @@ class App():
                 matching.append(lab)
         return matching
         
-    def y_sncut(self):
+    def xy_sncut(self):
+        """Selects members along the length of the selected member"""
         file_name = self.attach_to_instance()
         self.master.title(file_name)
         # section cut, in X/Y plane 
@@ -220,6 +229,9 @@ class App():
         self.SapModel.View.RefreshView()
         
     def inclined_sncut(self):
+        """Selects all the frames between two points.Due to the limitation of SAP2000 selection, it selects unwanted
+        frames also. This to a degree can be filtered using slope rule. Unfortunately slope rule fails for vertical 
+        members which has to be managed manually."""
         file_name = self.attach_to_instance()
         self.master.title(file_name)
         # SECTION CUT AT AN ANGLE
@@ -240,6 +252,7 @@ class App():
         self.SapModel.View.RefreshView()
         
     def select_similar(self):
+        """Selects frame with similar section property as that of selected frame"""
         file_name = self.attach_to_instance()
         self.master.title(file_name)
         # select frames of similar section
@@ -256,6 +269,7 @@ class App():
         print("selected frame is",target_section)
 
     def mirror(self):
+         """Selects frame with which are in mirror location of the selected frame"""
         file_name = self.attach_to_instance()
         self.master.title(file_name)
         # select elements in mirror location        
@@ -279,14 +293,15 @@ class App():
         self.SapModel.View.RefreshView()
 
     def no_model(self):
+        """To handle no model exception"""
         self.master.withdraw()
         messagebox.showwarning(title = "Active model not found",
                         message = "Close all SAP2000 instances if any open and reopen the target file first.")
-        messagebox.showinfo(title = "Help",message = "For trouble shooting contact me through sbz5677@gmail.com ")
         self.master.destroy()
         sys.exit()
     
     def return_values(self):
+        """Returns the user set units"""
         return self.SapModel,self.curr_unit
 
 if __name__ == '__main__':
@@ -296,5 +311,5 @@ if __name__ == '__main__':
     # reset to the previous units
     SapModel, curr_unit = inst_1.return_values()
     SapModel.SetPresentUnits(curr_unit)
-    # exiting information
+    # exiting
     tk.Tk().withdraw()
