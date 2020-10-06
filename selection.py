@@ -11,10 +11,7 @@ class App():
         # super().__init__() # initialise the superclass Tk
         self.master = master
 
-        file_name = self.attach_to_instance()
-
-        self.master.title(file_name)
-
+        self.master.title("selection")
         self.font_size = ("Courier", 12)
         self.master.frame_1 = tk.LabelFrame(master)
         self.master.frame_1.grid(row=0,column=0)
@@ -78,10 +75,9 @@ class App():
 
         self.curr_unit = self.SapModel.GetPresentUnits() #kn_m_C
         self.SapModel.SetPresentUnits(6) #kn_m_C
-        self.file_path = self.SapModel.GetModelFilename()
-        base_name = os.path.basename(self.file_path)[:-4]
-        self.title = base_name
-        self.backup(self.file_path) # backup function
+        self.model_path = self.SapModel.GetModelFilename()
+        base_name = os.path.basename(self.model_path)[:-4]
+        self.backup(self.model_path) # backup function
         return base_name
 
     def backup(self,model_path):
@@ -187,8 +183,9 @@ class App():
         
 
     def x_sncut(self):
+        file_name = self.attach_to_instance()
+        self.master.title(file_name)
         # section cut, in Y plane (along x axis)
-        self.backup(self.file_path)
         frame_info = self.SapModel.SelectObj.GetSelected()
         object_types = frame_info[1] 
         selected_labels = frame_info[2]
@@ -205,8 +202,9 @@ class App():
         self.SapModel.View.RefreshView()
 
     def y_sncut(self):
+        file_name = self.attach_to_instance()
+        self.master.title(file_name)
         # section cut, in X plane (along y axis)
-        self.backup(self.file_path)
         object_types = self.SapModel.SelectObj.GetSelected()[1] 
         selected_labels = self.SapModel.SelectObj.GetSelected()[2]
         length = float(self.entry_set[1]) # an arbitrary number greater than length of building
@@ -222,10 +220,10 @@ class App():
         self.SapModel.View.RefreshView()
         
     def inclined_sncut(self):
+        file_name = self.attach_to_instance()
+        self.master.title(file_name)
         # SECTION CUT AT AN ANGLE
         # WARNING !! UNNEEDED VERTICAL WILL BE CHOSEN UNFORTUNATELY ITS A SHORTCOMING OF API SELECTION FUNCTION
-
-        self.backup(self.file_path)
         target_labels = []
         max_z = float(self.entry_set[2])
         joints = self.SapModel.SelectObj.GetSelected()[2] #select two bounding points
@@ -242,7 +240,9 @@ class App():
         self.SapModel.View.RefreshView()
         
     def select_similar(self):
-        self.backup(self.file_path)
+        file_name = self.attach_to_instance()
+        self.master.title(file_name)
+        # select frames of similar section
         frame_info = self.SapModel.SelectObj.GetSelected()
         selected_labels = frame_info[2]
         if len(selected_labels) > 1:
@@ -256,7 +256,9 @@ class App():
         print("selected frame is",target_section)
 
     def mirror(self):
-        self.backup(self.file_path)
+        file_name = self.attach_to_instance()
+        self.master.title(file_name)
+        # select elements in mirror location        
         target_labels = []
         center_of_model = [float(x) for x in self.entry_set[0].split(",")]
         if len(center_of_model) != 3: 
