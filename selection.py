@@ -8,7 +8,6 @@ from tkinter import messagebox
 
 class App():
     def __init__(self,master):
-        # super().__init__() # initialise the superclass Tk
         self.master = master
 
         self.master.title("selection")
@@ -34,6 +33,7 @@ class App():
         button.grid(row = nrow,column=0,columnspan = 2,padx=10,pady=10)
 
     def assign(self):
+        """Function to create a frame to hold buttons for the operation"""
         self.entry_set = [x.get() for x in self.entry_set]
         self.master.frame_1.destroy()
         # recreating frame_1
@@ -59,6 +59,7 @@ class App():
 
 
     def attach_to_instance(self):
+        """Function to attach to instance of SAP2000"""
         try:
             #get the active ETABS object
             self.myETABSObject = comtypes.client.GetActiveObject("CSI.SAP2000.API.SapObject") 
@@ -78,7 +79,8 @@ class App():
         return base_name
 
     def backup(self,model_path):
-        if 4 in set(self.SapModel.Analyze.GetCaseStatus()[2]): 
+        """Creates backup for the active file in root directory of SAP2000 file"""
+        if 4 in set(self.SapModel.Analyze.GetCaseStatus()[2]): # 4 indicates a run case
             #atleast one case has run so no need to save the file and lose analysis data
             pass
         else:
@@ -110,14 +112,30 @@ class App():
         zmin = min(point_1[2],point_2[2])
         zmax = max(point_1[2],point_2[2])
         
-        kwargs_1 = {"XMin" : min(point_1[0],point_2[0]), "XMax" : max(point_1[0],point_2[0]), "YMin" : min(point_1[1],point_2[1]),"YMax" : max(point_1[1],point_2[1])\
-                            ,"ZMin" : zmin,"ZMax" :zmax }
-        kwargs_2 = {"XMin" : min(point_1[0],point_2[0]), "XMax" : max(point_1[0],point_2[0]), "YMin" : -max(point_1[1],point_2[1])+ 2 * orgin[1],"YMax" : -min(point_1[1],point_2[1])+ \
-                        2 * orgin[1] ,"ZMin" : zmin ,"ZMax" : zmax}
-        kwargs_3 = {"XMin" : -max(point_1[0],point_2[0])+ 2 * orgin[0], "XMax" : -min(point_1[0],point_2[0])+ 2 * orgin[0], "YMin" : min(point_1[1],point_2[1]),"YMax" : max(point_1[1],\
-                                point_2[1]),"ZMin" : zmin,"ZMax" : zmax}
-        kwargs_4 = {"XMin" : -max(point_1[0],point_2[0])+ 2 * orgin[0], "XMax" : -min(point_1[0],point_2[0])+ 2 * orgin[0], "YMin" : -max(point_1[1],point_2[1])+ 2 * orgin[1],\
-                        "YMax" : -min(point_1[1],point_2[1])+ 2 * orgin[1],"ZMin" : zmin,"ZMax" : zmax}
+        kwargs_1 = {"XMin" : min(point_1[0],point_2[0]),\
+                    "XMax" : max(point_1[0],point_2[0]),\
+                    "YMin" : min(point_1[1],point_2[1]),\
+                    "YMax" : max(point_1[1],point_2[1]),\
+                    "ZMin" : zmin,\
+                    "ZMax" :zmax }
+        kwargs_2 = {"XMin" : min(point_1[0],point_2[0]),\
+                    "XMax" : max(point_1[0],point_2[0]),\
+                    "YMin" : -max(point_1[1],point_2[1])+ 2 * orgin[1],\
+                    "YMax" : -min(point_1[1],point_2[1]) + 2 * orgin[1],\
+                    "ZMin" : zmin,\
+                    "ZMax" : zmax}
+        kwargs_3 = {"XMin" : -max(point_1[0],point_2[0])+ 2 * orgin[0],\
+                    "XMax" : -min(point_1[0],point_2[0])+ 2 * orgin[0],\
+                    "YMin" : min(point_1[1],point_2[1]),\
+                    "YMax" : max(point_1[1],point_2[1]),\
+                    "ZMin" : zmin,\
+                    "ZMax" : zmax}
+        kwargs_4 = {"XMin" : -max(point_1[0],point_2[0])+ 2 * orgin[0],\
+                    "XMax" : -min(point_1[0],point_2[0])+ 2 * orgin[0],\
+                    "YMin" : -max(point_1[1],point_2[1])+ 2 * orgin[1],\
+                    "YMax" : -min(point_1[1],point_2[1])+ 2 * orgin[1],\
+                    "ZMin" : zmin,\
+                    "ZMax" : zmax}
         
         if x == True and y == True:
             self.SapModel.SelectObj.CoordinateRange(**kwargs_1,IncludeIntersections = False)
@@ -193,12 +211,12 @@ class App():
                 point_2 = self.SapModel.PointObj.GetCoordCartesian(joints[1])[:-1]
                 if round(point_1[0],4) == round(point_2[0],4): #for y section cut
                     self.SapModel.SelectObj.CoordinateRange(min(point_1[0],point_2[0]),max(point_1[0],point_2[0]),\
-                                                    min(point_1[1],point_2[1])-length,max(point_1[1],point_2[1])+length\
-                                                    ,-max_z,max_z,IncludeIntersections = False)
+                                                min(point_1[1],point_2[1])-length,max(point_1[1],point_2[1])+length,\
+                                                -max_z,max_z,IncludeIntersections = False)
                 if round(point_1[1],4) == round(point_2[1],4): #for x section cut
-                    self.SapModel.SelectObj.CoordinateRange(min(point_1[0],point_2[0])-length,max(point_1[0],point_2[0])+length,\
-                                                    min(point_1[1],point_2[1]),max(point_1[1],point_2[1])\
-                                                    ,-max_z,max_z,IncludeIntersections = False)
+                    self.SapModel.SelectObj.CoordinateRange(min(point_1[0],point_2[0])-length,max(point_1[0],\
+                                                    point_2[0])+length,min(point_1[1],point_2[1]),max(point_1[1],\
+                                                    point_2[1]),-max_z,max_z,IncludeIntersections = False)
         self.SapModel.View.RefreshView()
         
     def inclined_sncut(self):
