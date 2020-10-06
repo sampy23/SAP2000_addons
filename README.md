@@ -1,5 +1,6 @@
 # Make SAP2000 applications
-Develop app that will help in fast selection of elements based on some logic
+Develop app that will help in fast selection of elements based on some logic.
+
 see demo.gif for more details
 
 # Future projects
