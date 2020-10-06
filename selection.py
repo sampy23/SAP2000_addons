@@ -237,7 +237,6 @@ class App():
     def select_similar(self):
         self.backup(self.file_path)
         frame_info = self.SapModel.SelectObj.GetSelected()
-        object_types = frame_info[1] 
         selected_labels = frame_info[2]
         if len(selected_labels) > 1:
             print("More than one elements selected")
@@ -290,4 +289,3 @@ if __name__ == '__main__':
     SapModel.SetPresentUnits(curr_unit)
     # exiting information
     tk.Tk().withdraw()
-    messagebox.showinfo(title = "Help",message = "For trouble shooting contact me through sbz5677@gmail.com ")
