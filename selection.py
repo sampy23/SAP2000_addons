@@ -269,7 +269,7 @@ class App():
         print("selected frame is",target_section)
 
     def mirror(self):
-         """Selects frame with which are in mirror location of the selected frame"""
+        """Selects frame with which are in mirror location of the selected frame"""
         file_name = self.attach_to_instance()
         self.master.title(file_name)
         # select elements in mirror location        
